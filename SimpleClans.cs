@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+// This is a simplified version of Rust:IO Clans
+using Newtonsoft.Json.Linq;
 using Oxide.Core;
 using Oxide.Core.Libraries;
 using Oxide.Core.Plugins;
