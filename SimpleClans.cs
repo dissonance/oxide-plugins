@@ -31,6 +31,7 @@ namespace Oxide.Plugins {
                 foreach (var iclan in clansData) {
                     string tag = iclan.Key;
                     var clanData = iclan.Value as Dictionary<string, object>;
+                    string description = (string)clanData["description"];
                     string owner = (string)clanData["owner"];
                     List<string> moderators = new List<string>();
                     foreach (var imoderator in clanData["moderators"] as List<object>) {
@@ -47,6 +48,7 @@ namespace Oxide.Plugins {
                     Clan clan;
                     clans.Add(tag, clan = new Clan() {
                         tag = tag,
+                        description = description,
                         owner = owner,
                         moderators = moderators,
                         members = members,
@@ -66,6 +68,7 @@ namespace Oxide.Plugins {
             foreach (var clan in clans) {
                 var clanData = new Dictionary<string, object>();
                 clanData.Add("tag", clan.Value.tag);
+                clanData.Add("description", clan.Value.description);
                 clanData.Add("owner", clan.Value.owner);
                 var moderators = new List<object>();
                 foreach (var imoderator in clan.Value.moderators)
@@ -97,9 +100,10 @@ namespace Oxide.Plugins {
             "Pending invites:",
             "To learn more about clans, type: <color=\"#ffd479\">/clan help</color>",
 
-            "Usage: <color=\"#ffd479\">/clan create \"TAG\"</color>",
+            "Usage: <color=\"#ffd479\">/clan create \"TAG\" \"Description\"</color>",
             "You are already a member of a clan.",
             "Clan tags must be 2 to 6 characters long and may contain standard letters and numbers only",
+            "Please provide a short description of your clan.",
             "There is already a clan with this tag.",
             "You are now the owner of your new clan:",
             "To invite new members, type: <color=\"#ffd479\">/clan invite \"Player name\"</color>",
@@ -146,7 +150,7 @@ namespace Oxide.Plugins {
 
             "Available commands:",
             "<color=#ffd479>/clan</color> - Displays relevant information about your current clan",
-            "<color=#ffd479>/clan create \"TAG\"</color> - Creates a new clan you own",
+            "<color=#ffd479>/clan create \"TAG\" \"Description\"</color> - Creates a new clan you own",
             "<color=#ffd479>/clan join \"TAG\"</color> - Joins a clan you have been invited to",
             "<color=#ffd479>/clan leave</color> - Leaves your current clan",
             "<color=#74c6ff>Moderator</color> commands:",
@@ -289,7 +293,7 @@ namespace Oxide.Plugins {
                             messages[pair.Key] = (string)pair.Value;
                     loadData();
                 } catch (Exception ex2) {
-                    PrintWarning("oxide/config/Clans.json seems to contain an invalid 'messages' structure. Please delete the config file once and reload the plugin.");
+                    PrintWarning("oxide/config/Simple_Clans.json seems to contain an invalid 'messages' structure. Please delete the config file once and reload the plugin.");
                 }
                 foreach (var player in BasePlayer.activePlayerList)
                     setupPlayer(player);
@@ -355,7 +359,7 @@ namespace Oxide.Plugins {
         private void SendHelpText(BasePlayer player)
         {
             var sb = new StringBuilder()
-               .Append("<size=18>Clans</size> originally by <color=#ce422b>http://playrust.io</color> and modified for this server\n")
+               .Append("<size=18>Simple Clans</size> based on Rust:IO Clans by <color=#ce422b>http://playrust.io</color>\n")
                .Append("  ").Append(_("<color=\"#ffd479\">/clan</color> - Displays your current clan status")).Append("\n")
                .Append("  ").Append(_("<color=\"#ffd479\">/clan help</color> - Learn how to create or join a clan"));
             player.ChatMessage(sb.ToString());
@@ -379,7 +383,7 @@ namespace Oxide.Plugins {
                         sb.Append(_("You are a moderator of:"));
                     else
                         sb.Append(_("You are a member of:"));
-                    sb.Append(" [").Append(myClan.tag).Append("] ").Append("\n");
+                    sb.Append(" [").Append(myClan.tag).Append("] ").Append(myClan.description).Append("\n");
                     sb.Append(_("Members online:")).Append(" ");
                     List<string> onlineMembers = new List<string>();
                     int n = 0;
@@ -419,7 +423,7 @@ namespace Oxide.Plugins {
             switch (args[0]) {
                 case "create":
                     if (args.Length != 3) {
-                        sb.Append(_("Usage: <color=\"#ffd479\">/clan create \"TAG\"</color>"));
+                        sb.Append(_("Usage: <color=\"#ffd479\">/clan create \"TAG\" \"Description\"</color>"));
                         break;
                     }
                     if (myClan != null) {
@@ -428,6 +432,11 @@ namespace Oxide.Plugins {
                     }
                     if (!tagRe.IsMatch(args[1])) {
                         sb.Append(_("Clan tags must be 2 to 6 characters long and may contain standard letters and numbers only"));
+                        break;
+                    }
+                    args[2] = args[2].Trim();
+                    if (args[2].Length < 2 || args[2].Length > 30) {
+                        sb.Append(_("Please provide a short description of your clan."));
                         break;
                     }
                     if (clans.ContainsKey(args[1])) {
@@ -440,7 +449,7 @@ namespace Oxide.Plugins {
                     lookup[userId] = myClan;
                     setupPlayer(player); // Add clan tag
                     sb.Append(_("You are now the owner of your new clan:")).Append(" ");
-                    sb.Append("[").Append(myClan.tag).Append("] ").Append("\n");
+                    sb.Append("[").Append(myClan.tag).Append("] ").Append(myClan.description).Append("\n");
                     sb.Append(_("To invite new members, type: <color=\"#ffd479\">/clan invite \"Player name\"</color>"));
                     myClan.onCreate();
                     break;
@@ -475,7 +484,7 @@ namespace Oxide.Plugins {
                     saveData();
                     myClan.Broadcast(_("%MEMBER% invited %PLAYER% to the clan.", new Dictionary<string, string>() { { "MEMBER", stripTag(player.displayName, myClan) }, { "PLAYER", invPlayer.displayName } }));
                     invPlayer.SendConsoleCommand("chat.add", "",
-                        _("You have been invited to join the clan:") + " [" + myClan.tag + "] " + "\n" +
+                        _("You have been invited to join the clan:") + " [" + myClan.tag + "] " + myClan.description + "\n" +
                         _("To join, type: <color=#ffd479>/clan join \"%TAG%\"</color>", new Dictionary<string, string>() { { "TAG", myClan.tag } }));
                     myClan.onUpdate();
                     break;
@@ -675,14 +684,13 @@ namespace Oxide.Plugins {
                     foreach (var member in clan.members)
                         lookup.Remove(member);
                     setupPlayers(clan.members);
-                    sb.Append(_("You have deleted the clan:")).Append(" [").Append(clan.tag).Append("] ");
+                    sb.Append(_("You have deleted the clan:")).Append(" [").Append(clan.tag).Append("] ").Append(clan.description);
                     myClan.onDestroy();
                     break;
                 default:
                     sb.Append(_("Available commands:")).Append("\n");
                     sb.Append("  ").Append(_("<color=#ffd479>/clan</color> - Displays relevant information about your current clan")).Append("\n");
-                    // sb.Append("  ").Append(_("<color=#ffd479>/c Message...</color> - Sends a message to all online clan members")).Append("\n");
-                    sb.Append("  ").Append(_("<color=#ffd479>/clan create \"TAG\"</color> - Creates a new clan you own")).Append("\n");
+                    sb.Append("  ").Append(_("<color=#ffd479>/clan create \"TAG\" \"Description\"</color> - Creates a new clan you own")).Append("\n");
                     sb.Append("  ").Append(_("<color=#ffd479>/clan join \"TAG\"</color> - Joins a clan you have been invited to")).Append("\n");
                     sb.Append("  ").Append(_("<color=#ffd479>/clan leave</color> - Leaves your current clan")).Append("\n");
                     sb.Append(_("<color=#74c6ff>Moderator</color> commands:")).Append("\n");
@@ -704,13 +712,14 @@ namespace Oxide.Plugins {
         public class Clan
         {
             public string tag;
+            public string description;
             public string owner;
             public List<string> moderators = new List<string>();
             public List<string> members = new List<string>();
             public List<string> invited = new List<string>();
 
-            public static Clan Create(string tag, string ownerId) {
-                var clan = new Clan() { tag = tag, owner = ownerId };
+            public static Clan Create(string tag, string description, string ownerId) {
+                var clan = new Clan() { tag = tag, description = description, owner = ownerId };
                 clan.members.Add(ownerId);
                 return clan;
             }
@@ -743,6 +752,7 @@ namespace Oxide.Plugins {
             internal JObject ToJObject() {
                 var obj = new JObject();
                 obj["tag"] = tag;
+                obj["description"] = description;
                 obj["owner"] = owner;
                 var jmoderators = new JArray();
                 foreach (var moderator in moderators)
