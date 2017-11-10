@@ -172,7 +172,7 @@ namespace Oxide.Plugins {
                     messages.Add(text, text);
             }
             Config["messages"] = messages;
-            Config.Set("limit", "members", 5);
+            Config.Set("limit", "members", -1);
             Config.Set("limit", "moderators", -1);
         }
 
