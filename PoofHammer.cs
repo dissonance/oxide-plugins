@@ -1,4 +1,5 @@
-﻿using System;
+﻿// This is a simplified version of MagicHammer
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using Rust;
@@ -8,7 +9,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Oxide.Plugins {
-    [Info("PoofHammer", "dissonance", "1.0.0")]
+    [Info("PoofHammer", "Norn/Werkrat and modified by dissonance", "1.0.0")]
     [Description("Hit stuff with the hammer delete things.")]
     public class PoofHammer : RustPlugin {
         int MODE_REPAIR = 1;
