@@ -50,7 +50,6 @@ namespace Oxide.Plugins {
                 if (hammerUserData.Users.TryGetValue(player.userID, out p) == false) {
                     var info = new PoofHammerInfo();
                     info.Enabled = false;
-                    info.Mode = MODE_REPAIR; //Repair
                     info.UserId = player.userID;
                     info.Messages_Enabled = true;
                     hammerUserData.Users.Add(player.userID, info);
@@ -217,6 +216,7 @@ namespace Oxide.Plugins {
         private object OnStructureRepair(BaseCombatEntity entity, BasePlayer player) {
             if (CanPoofHammer(player) && PoofHammerEnabled(player)) {
                 OnStructureRepairEx(entity, player);
+                return false;
             } else {
                 return null; //user not allowed to use PoofHammer -OR- they have it disabled (so regular repairing isn't blocked)
             }
