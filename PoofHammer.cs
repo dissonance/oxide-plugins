@@ -1,4 +1,4 @@
-// This is a simplified version of MagicHammer
+// This is a simplified version of MagicHammer with only the destroy functionality
 using System;
 using System.Linq;
 using System.Collections.Generic;
