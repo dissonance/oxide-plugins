@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Oxide.Plugins {
-    [Info("Simple Clans", "playrust.io / dcode and modified by dissonance", "1.0.0")]
+    [Info("Simple Clans", "dissonance", "1.0.0")]
     [Description("Allows your players to form clans with clan tags that display in game")]
     public class SimpleClans : RustPlugin
     {
