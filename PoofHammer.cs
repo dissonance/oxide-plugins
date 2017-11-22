@@ -9,7 +9,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Oxide.Plugins {
-    [Info("PoofHammer", "Norn/Werkrat and modified by dissonance", "1.0.0")]
+    [Info("PoofHammer", "dissonance", "1.0.0")]
     [Description("Hit stuff with the hammer to delete.")]
     public class PoofHammer : RustPlugin {
 
