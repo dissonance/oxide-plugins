@@ -1,35 +1,35 @@
-Simple set and display with chat command. Strip out any unnecessary features.
+// Simple set and display with chat command. Strip out any unnecessary features.
 
-Read a list of wipe dates and display date based on current date?
+// Read a list of wipe dates and display date based on current date?
 
-Map/BP Wipe
-    Print to chat:
-        Last MAP wipe: 00/00/0000 Next MAP wipe: 00/00/0000
-        Last BP wipe: 00/00/0000 Next BP wipe: 00/00/0000
-        Time until next MAP wipe: 00 days
-        Time until next BP wipe: 00 days
+// Map/BP Wipe
+//     Print to chat:
+//         Last MAP wipe: 00/00/0000 Next MAP wipe: 00/00/0000
+//         Last BP wipe: 00/00/0000 Next BP wipe: 00/00/0000
+//         Time until next MAP wipe: 00 days
+//         Time until next BP wipe: 00 days
 
-    Commands:
-        Players:
-            /nextwipe
-            /lastwipe
-            /wipe
+//     Commands:
+//         Players:
+//             /nextwipe
+//             /lastwipe
+//             /wipe
 
-        Admin/Mods:
-            /setwipe map 00/00/0000
-            /setwipe bp 00/00/0000
-            /setnextwipe map 00/00/0000
-            /setnextwipe bp 00/00/0000
+//         Admin/Mods:
+//             /setwipe map 00/00/0000
+//             /setwipe bp 00/00/0000
+//             /setnextwipe map 00/00/0000
+//             /setnextwipe bp 00/00/0000
 
 
-Variables:
-    /setnextwipe -
-        nextMapWipe
-        nextBPWipe
+// Variables:
+//     /setnextwipe -
+//         nextMapWipe
+//         nextBPWipe
 
-    /setwipe -
-        lastMapWipe
-        lastBPWipe
+//     /setwipe -
+//         lastMapWipe
+//         lastBPWipe
 
 // Based on WipeSchedule by k1lly0u and modified by dissonance
 using System;
@@ -93,7 +93,6 @@ namespace Oxide.Plugins {
             return string.Format(string.Format("{0:D2} Days",t.Days));
         }
 
-        // Not used?
         private void BroadcastWipe() {
             PrintToChat(string.Format(MSG("lastMapWipe", null), configData.LastWipe, NextWipeDays(NextWipeDate)));
         }
@@ -309,9 +308,10 @@ namespace Oxide.Plugins {
             // {"savedNextWipeMap", "<color=#b3b3b3>Successfully set next map wipe to:</color> <color=#ffae1a>{0}</color>" },
             // {"setNextWipeMapManual", "<color=#b3b3b3> - Set the time of next map wipe. Format: MM/dd/yyyy</color>" }
 
-            {"lastNextWipe", "" },
-            {"lastWipe", "" },
-            {"nextWipe", "" }
+            {"lastNextWipe", "<color=#b3b3b3>Last {0} wipe:</color> <color=#ffae1a>{1}</color> <color=#b3b3b3>Next {0} wipe:</color> <color=#ffae1a>{2}</color>" },
+            {"lastWipe", "<color=#b3b3b3>Last {0} wipe:</color> <color=#ffae1a>{1}</color>" },
+            {"nextWipe", "<color=#b3b3b3>Next {0} wipe:</color> <color=#ffae1a>{1}</color>" }
+
         };
         #endregion
     }
